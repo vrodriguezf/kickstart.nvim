@@ -238,6 +238,50 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  ---@type LazySpec
+  {
+    'mikavilpas/yazi.nvim',
+    event = 'VeryLazy',
+    dependencies = {
+      -- check the installation instructions at
+      -- https://github.com/folke/snacks.nvim
+      'folke/snacks.nvim',
+    },
+    keys = {
+      -- 👇 in this section, choose your own keymappings!
+      {
+        '<leader>-',
+        mode = { 'n', 'v' },
+        '<cmd>Yazi<cr>',
+        desc = 'Open yazi at the current file',
+      },
+      {
+        -- Open in the current working directory
+        '<leader>cw',
+        '<cmd>Yazi cwd<cr>',
+        desc = "Open the file manager in nvim's working directory",
+      },
+      {
+        '<c-up>',
+        '<cmd>Yazi toggle<cr>',
+        desc = 'Resume the last yazi session',
+      },
+    },
+    ---@type YaziConfig | {}
+    opts = {
+      -- if you want to open yazi instead of netrw, see below for more info
+      open_for_directories = false,
+      keymaps = {
+        show_help = '<f1>',
+      },
+    },
+    -- 👇 if you use `open_for_directories=true`, this is recommended
+    init = function()
+      -- More details: https://github.com/mikavilpas/yazi.nvim/issues/802
+      -- vim.g.loaded_netrw = 1
+      vim.g.loaded_netrwPlugin = 1
+    end,
+  },
   {
     'ravitemer/mcphub.nvim',
     dependencies = {
@@ -253,6 +297,62 @@ require('lazy').setup({
     end,
   },
   {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+      -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    lazy = false, -- neo-tree will lazily load itself
+    ---@module "neo-tree"
+    ---@type neotree.Config?
+    opts = {
+      -- fill any relevant options here
+    },
+  },
+  {
+        "GeorgesAlkhouri/nvim-aider",
+        cmd = "Aider",
+        -- Example key mappings for common actions:
+        keys = {
+          { "<leader>at", "<cmd>Aider toggle<cr>", desc = "Toggle Aider" },
+          { "<leader>as", "<cmd>Aider send<cr>", desc = "Send to Aider", mode = { "n", "v" } },
+          { "<leader>ac", "<cmd>Aider command<cr>", desc = "Aider Commands" },
+          { "<leader>ab", "<cmd>Aider buffer<cr>", desc = "Send Buffer" },
+          { "<leader>a+", "<cmd>Aider add<cr>", desc = "Add File" },
+          { "<leader>a-", "<cmd>Aider drop<cr>", desc = "Drop File" },
+          { "<leader>ar", "<cmd>Aider add readonly<cr>", desc = "Add Read-Only" },
+          { "<leader>aR", "<cmd>Aider reset<cr>", desc = "Reset Session" },
+          -- Example nvim-tree.lua integration if needed
+          { "<leader>a+", "<cmd>AiderTreeAddFile<cr>", desc = "Add File from Tree to Aider", ft = "NvimTree" },
+          { "<leader>a-", "<cmd>AiderTreeDropFile<cr>", desc = "Drop File from Tree from Aider", ft = "NvimTree" },                                 
+        },  
+        dependencies = {
+          "folke/snacks.nvim",
+          --- The below dependencies are optional
+          "catppuccin/nvim",
+          "nvim-tree/nvim-tree.lua",
+          --- Neo-tree integration
+          {
+            "nvim-neo-tree/neo-tree.nvim",
+            opts = function(_, opts)
+              -- Example mapping configuration (already set by default)
+              -- opts.window = {
+              --   mappings = {
+              --     ["+"] = { "nvim_aider_add", desc = "add to aider" },
+              --     ["-"] = { "nvim_aider_drop", desc = "drop from aider" }
+              --     ["="] = { "nvim_aider_add_read_only", desc = "add read-only to aider" }
+              --   }
+              -- }
+              require("nvim_aider.neo_tree").setup(opts)
+            end,
+          },
+        },
+      config = true,
+  },
+  {
     'CopilotC-Nvim/CopilotChat.nvim',
     dependencies = {
       { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
@@ -261,6 +361,7 @@ require('lazy').setup({
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
       -- See Configuration section for options
+      chat_autocomplete = false,
     },
     -- See Commands section for default commands if you want to lazy load on them
   },
