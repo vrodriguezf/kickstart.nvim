@@ -425,7 +425,8 @@ require('lazy').setup({
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
       -- See Configuration section for options
-      chat_autocomplete = false,
+      temperature = 0.1,
+      mappings = {},
     },
     -- See Commands section for default commands if you want to lazy load on them
   },
